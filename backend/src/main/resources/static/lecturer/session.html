@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CHANGE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
   <title>Live Session — Lecturer</title>
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -17,6 +19,8 @@
     }
     .qr-box {
       width: 260px; height: 260px;
+      max-width: 100%;              /* CHANGE: shrink on phone */
+      aspect-ratio: 1 / 1;          /* CHANGE: keep square */
       border-radius: 12px;
       background: repeating-conic-gradient(#e2e8f0 0 25%, #fff 0 50%) 50% / 22px 22px;
       border: 10px solid #fff;
@@ -31,6 +35,12 @@
     }
     .countdown strong { color: var(--danger); font-size: 15px; }
     .feed-list { list-style: none; display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; }
+
+    /* CHANGE: tighter spacing on phone */
+    @media (max-width: 639px) {
+      .qr-wrap { padding: 18px; }
+      .qr-box  { width: 220px; height: 220px; }
+    }
   </style>
 </head>
 <body>
@@ -45,10 +55,13 @@
     <div class="sidebar-footer"><a href="../index.html" style="color:#94a3b8;">← Logout</a></div>
   </aside>
 
+  <!-- CHANGE: Overlay -->
+  <div class="sidebar-overlay"></div>
+
   <div class="main">
     <header class="topbar">
       <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn">☰</button>
+        <button class="menu-btn" aria-label="Menu">☰</button>
         <h1>Live Session</h1>
       </div>
       <div class="user">
@@ -89,6 +102,16 @@
     </div>
   </div>
 </div>
+
+<!-- CHANGE: Bottom nav -->
+<nav class="bottom-nav">
+  <ul>
+    <li><a href="dashboard.html"><span class="icon">🏠</span>Home</a></li>
+    <li><a href="session.html"><span class="icon">🎬</span>Session</a></li>
+    <li><a href="reports.html"><span class="icon">📈</span>Reports</a></li>
+  </ul>
+</nav>
+
 <script src="../assets/js/nav.js"></script>
 </body>
 </html>

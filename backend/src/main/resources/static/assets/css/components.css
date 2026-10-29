@@ -107,6 +107,7 @@
         font-size: 28px; font-weight: 800; margin-top: 6px;
 }
 
+/* ===== Empty state ===== */
 .empty {
   display: flex;
   flex-direction: column;
@@ -124,52 +125,19 @@
 }
 .empty strong { color: var(--text); display: block; margin-bottom: 4px; }
 
+/* ============================================================
+   RESPONSIVE COMPONENT TWEAKS
+   ============================================================ */
 
-/* Form Controls & Modals */
-.form-group {
-  margin-bottom: 14px;
-  text-align: left;
+/* CHANGE: Full-width buttons on tiny phones */
+@media (max-width: 480px) {
+  .btn { padding: 12px 18px; font-size: 14px; }
+  .btn-stack { width: 100%; }
 }
-.form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: var(--text);
-}
-.form-input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-family: inherit;
-  background: var(--surface);
-  color: var(--text);
-}
-.form-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
-}
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  display: none;
-  place-items: center;
-  z-index: 1000;
-  padding: 16px;
-}
-.modal-backdrop.open {
-  display: grid;
-}
-.modal-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 24px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border);
+
+/* CHANGE: Camera frame fits small screens */
+@media (max-width: 639px) {
+  .camera-frame { max-width: 100%; border-radius: 10px; }
+  .stat-grid { gap: 10px; }
+  .badge { font-size: 11px; padding: 3px 8px; }
 }

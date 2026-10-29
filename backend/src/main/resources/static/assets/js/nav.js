@@ -1,25 +1,64 @@
-// Shared Navigation, User Session & Page Data Loader
+/**
+ * ============================================================
+ * NAVIGATION & BACKEND DATA CONTROLLER
+ * Handles: sidebar drawer, overlay, bottom-nav, active links,
+ * user session display, and live backend API data binding
+ * ============================================================
+ */
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Mobile sidebar toggle
-  const btn = document.querySelector('.menu-btn');
+
   const sidebar = document.querySelector('.sidebar');
-  if (btn && sidebar) {
-    btn.addEventListener('click', () => sidebar.classList.toggle('open'));
+  const menuBtn = document.querySelector('.menu-btn');
+  const overlay = document.querySelector('.sidebar-overlay');
+
+  // Centralised open/close with body scroll lock
+  function openSidebar() {
+    sidebar?.classList.add('open');
+    overlay?.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebar?.classList.remove('open');
+    overlay?.classList.remove('show');
+    document.body.style.overflow = '';
   }
 
-  // 2. Highlight active sidebar link
-  const path = window.location.pathname;
-  document.querySelectorAll('.sidebar a').forEach(a => {
-    const href = a.getAttribute('href');
-    if (href && path.endsWith(href)) a.classList.add('active');
-    if (href && href.includes('index.html')) {
-      a.addEventListener('click', () => localStorage.removeItem('attendify_user'));
-    }
+  // Hamburger toggles drawer (tablet only)
+  menuBtn?.addEventListener('click', () => {
+    sidebar?.classList.contains('open') ? closeSidebar() : openSidebar();
   });
 
-  // 3. Populate logged-in user info
+  // Overlay click closes drawer
+  overlay?.addEventListener('click', closeSidebar);
+
+  // Auto-close drawer after link tap on mobile/tablet & clear session on Logout
+  document.querySelectorAll('.sidebar a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth < 1024) closeSidebar();
+      const href = a.getAttribute('href');
+      if (href && href.includes('index.html')) {
+        localStorage.removeItem('attendify_user');
+      }
+    });
+  });
+
+  // Highlight active link in BOTH sidebar and bottom nav
+  const path = window.location.pathname;
+  document
+    .querySelectorAll('.sidebar a, .bottom-nav a')
+    .forEach(a => {
+      const href = a.getAttribute('href');
+      if (href && path.endsWith(href)) a.classList.add('active');
+    });
+
+  // Auto-close drawer when resizing up to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024) closeSidebar();
+  });
+
+  // Populate logged-in user info
   const savedUser = JSON.parse(localStorage.getItem('attendify_user') || 'null');
-  const userName = savedUser ? savedUser.name : 'Guest';
+  const userName = savedUser ? savedUser.name : 'Lee Zheng Shen';
   const initials = userName
     .split(' ')
     .map(w => w[0])
@@ -27,17 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     .substring(0, 2)
     .toUpperCase();
 
-  const topbarName = document.getElementById('topbar-user-name');
-  const topbarInitials = document.getElementById('topbar-user-initials');
-  const sidebarName = document.getElementById('sidebar-user-name');
+  setText('topbar-user-name', userName);
+  setText('topbar-user-initials', initials || 'LZ');
+  setText('sidebar-user-name', savedUser ? `${savedUser.name} (${savedUser.studentId})` : 'Lee Zheng Shen (STU001)');
 
-  if (topbarName) topbarName.textContent = userName;
-  if (topbarInitials) topbarInitials.textContent = initials || 'G';
-  if (sidebarName) sidebarName.textContent = savedUser ? `${savedUser.name} (${savedUser.studentId})` : 'Guest';
-
-  // 4. Load page-specific backend data
+  // Load backend data for active page
   initStudentPages(savedUser);
-  initLecturerPages(savedUser);
+  initLecturerPages();
   initAdminPages();
 });
 
@@ -70,11 +105,11 @@ async function initStudentPages(user) {
           const checkedIn = records.some(rec => rec.roomCode === r.roomCode);
           return `
             <tr>
-              <td><strong>${r.roomCode}</strong> (Floor ${r.floorLevel})</td>
-              <td>${idx === 0 ? '10:00 AM – 12:00 PM' : '02:00 PM – 04:00 PM'}</td>
-              <td>
+              <td data-label="Course"><strong>${r.roomCode}</strong> (Floor ${r.floorLevel})</td>
+              <td data-label="Time">${idx === 0 ? '10:00 AM – 12:00 PM' : '02:00 PM – 04:00 PM'}</td>
+              <td data-label="Status">
                 <span class="badge ${checkedIn ? 'badge-present' : 'badge-late'}">
-                  ${checkedIn ? 'Present' : 'Pending Scan'}
+                  ${checkedIn ? 'Present' : 'Pending Check-in'}
                 </span>
               </td>
             </tr>
@@ -106,14 +141,13 @@ async function initStudentPages(user) {
       if (records.length > 0) {
         recordsBody.innerHTML = records.map(r => {
           const dt = r.timestamp ? new Date(r.timestamp) : new Date();
-          const bioIcon = r.biometricType === 'FACE_ID' ? '🙂 Face ID' : '👆 Fingerprint';
-          const fpId = r.fingerprintId || `FP-${r.studentId}-VERIFIED`;
+          const bioIcon = r.biometricType === 'FACE_ID' ? '😊 Face ID' : '👆 Fingerprint';
           return `
             <tr>
-              <td>${dt.toLocaleDateString()}</td>
-              <td><strong>${r.roomCode}</strong> <span style="font-size:12px; color:var(--text-muted);">(${bioIcon} · ${fpId})</span></td>
-              <td>${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-              <td><span class="badge badge-present">${r.status}</span></td>
+              <td data-label="Date">${dt.toLocaleDateString()}</td>
+              <td data-label="Course"><strong>${r.roomCode}</strong> <span style="font-size:12px; color:var(--text-muted);">(${bioIcon})</span></td>
+              <td data-label="Time">${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+              <td data-label="Status"><span class="badge badge-present">${r.status}</span></td>
             </tr>
           `;
         }).join('');
@@ -139,7 +173,7 @@ async function initLecturerPages() {
       const records = await attRes.json();
       const studentCount = users.filter(u => u.role === 'STUDENT').length;
 
-      setText('stat-active', '1');
+      setText('stat-active', rooms.length);
       setText('stat-courses', rooms.length);
       setText('stat-students', studentCount);
       setText('stat-checked', records.length);
@@ -147,9 +181,9 @@ async function initLecturerPages() {
       if (rooms.length > 0) {
         coursesBody.innerHTML = rooms.map(r => `
           <tr>
-            <td><strong>${r.roomCode}</strong> (Level ${r.floorLevel})</td>
-            <td>${studentCount} enrolled</td>
-            <td><a href="session.html?room=${encodeURIComponent(r.roomCode)}" class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Start Session</a></td>
+            <td data-label="Course"><strong>${r.roomCode}</strong> (Level ${r.floorLevel})</td>
+            <td data-label="Students">${studentCount} enrolled</td>
+            <td data-label="Action"><a href="session.html?room=${encodeURIComponent(r.roomCode)}" class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Monitor Session</a></td>
           </tr>
         `).join('');
       }
@@ -159,46 +193,22 @@ async function initLecturerPages() {
   }
 
   // Lecturer Live Session page
-  const qrBox = document.getElementById('qr-box');
   const feedList = document.getElementById('feed-list');
-  if (qrBox && feedList) {
+  if (feedList) {
+    const qrBox = document.getElementById('qr-box');
     const params = new URLSearchParams(window.location.search);
     const activeRoom = params.get('room') || 'LAB-2-01';
-    let paused = false;
-    let countdown = 15;
-
-    const renderQr = () => {
-      const token = Math.random().toString(36).substring(2, 7).toUpperCase();
+    if (qrBox) {
       qrBox.innerHTML = `
         <div style="text-align:center; padding:12px; background:#fff; border-radius:8px;">
-          <div style="font-size:28px; margin-bottom:4px;">📱</div>
+          <div style="font-size:32px; margin-bottom:4px;">📍</div>
           <div style="font-weight:800; color:var(--text); font-size:16px;">${activeRoom}</div>
-          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Token: ${token}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">GPS Geofence Active</div>
         </div>
       `;
-    };
-
-    renderQr();
-    setText('session-end', 'In 2 hours');
-    setText('qr-timer', `${countdown}s`);
-
-    setInterval(() => {
-      if (paused) return;
-      countdown--;
-      if (countdown <= 0) {
-        countdown = 15;
-        renderQr();
-      }
-      setText('qr-timer', `${countdown}s`);
-    }, 1000);
-
-    const toggleBtn = document.getElementById('toggle-session');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        paused = !paused;
-        toggleBtn.textContent = paused ? '▶ Resume Session' : '⏸ Pause Session';
-      });
     }
+    setText('session-end', 'Active');
+    setText('qr-timer', 'Live GPS');
 
     const loadCheckins = async () => {
       try {
@@ -213,13 +223,12 @@ async function initLecturerPages() {
         if (records.length > 0) {
           feedList.innerHTML = records.map(r => {
             const dt = r.timestamp ? new Date(r.timestamp) : new Date();
-            const bioIcon = r.biometricType === 'FACE_ID' ? '🙂 Face ID' : '👆 Fingerprint';
-            const fpId = r.fingerprintId || `FP-${r.studentId}-VERIFIED`;
+            const bioIcon = r.biometricType === 'FACE_ID' ? '😊 Face ID' : '👆 Fingerprint';
             return `
               <li style="padding:12px; background:var(--bg); border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center;">
                 <div>
                   <strong>${r.studentName || r.studentId}</strong>
-                  <div style="font-size:12px; color:var(--text-muted);">${r.studentId} · ${r.roomCode} · ${bioIcon} (${fpId})</div>
+                  <div style="font-size:12px; color:var(--text-muted);">${r.studentId} · ${r.roomCode} · ${bioIcon}</div>
                 </div>
                 <div style="text-align:right;">
                   <span class="badge badge-present">${r.status}</span>
@@ -241,7 +250,6 @@ async function initLecturerPages() {
 
 // ==================== ADMIN PAGES ====================
 async function initAdminPages() {
-  // 1. Admin Dashboard
   const statTotalUsers = document.getElementById('stat-total-users');
   if (statTotalUsers && document.getElementById('system-health-list')) {
     try {
@@ -269,13 +277,13 @@ async function initAdminPages() {
           <span class="badge badge-present">Connected</span>
         </li>
         <li style="display:flex; justify-content:space-between; padding:10px; background:var(--bg); border-radius:var(--radius-sm);">
-          <span><span class="dot dot-green"></span>Geofence + Fingerprint Biometric Service</span>
+          <span><span class="dot dot-green"></span>Geofence + Biometric Service</span>
           <span class="badge badge-present">${rooms.length} Active Zones</span>
         </li>
       `;
 
       const recentList = document.getElementById('recent-activity-list');
-      if (records.length > 0) {
+      if (records.length > 0 && recentList) {
         recentList.innerHTML = records.slice(0, 5).map(r => `
           <li style="display:flex; justify-content:space-between; padding:10px; background:var(--bg); border-radius:var(--radius-sm);">
             <span><strong>${r.studentName}</strong> checked into <strong>${r.roomCode}</strong></span>
@@ -288,7 +296,7 @@ async function initAdminPages() {
     }
   }
 
-  // 2. Admin Users Page
+  // Admin Users Page
   const usersBody = document.getElementById('users-body');
   if (usersBody) {
     const loadUsers = async () => {
@@ -297,10 +305,10 @@ async function initAdminPages() {
       if (users.length > 0) {
         usersBody.innerHTML = users.map(u => `
           <tr>
-            <td><strong>${u.name}</strong> <span style="color:var(--text-muted); font-size:12px;">(${u.studentId})</span></td>
-            <td><span class="badge badge-info">${u.role}</span></td>
-            <td><code>${u.fingerprintId || ('FP-' + u.studentId + '-VERIFIED')}</code></td>
-            <td><span class="badge badge-present">👆 Fingerprint Registered</span></td>
+            <td data-label="Name"><strong>${u.name}</strong> <span style="color:var(--text-muted); font-size:12px;">(${u.studentId})</span></td>
+            <td data-label="Role"><span class="badge badge-info">${u.role}</span></td>
+            <td data-label="Email">${u.studentId.toLowerCase()}@campus.edu.my</td>
+            <td data-label="Status"><span class="badge badge-present">Biometric Active</span></td>
           </tr>
         `).join('');
       }
@@ -325,7 +333,7 @@ async function initAdminPages() {
     }
   }
 
-  // 3. Admin Geofence Page
+  // Admin Geofence Page
   const locationsBody = document.getElementById('locations-body');
   if (locationsBody) {
     const loadLocations = async () => {
@@ -334,17 +342,16 @@ async function initAdminPages() {
       if (rooms.length > 0) {
         locationsBody.innerHTML = rooms.map(r => `
           <tr style="cursor:pointer;" onclick="previewLocation('${r.roomCode}', ${r.latitude}, ${r.longitude}, ${r.allowedRadius})">
-            <td>
+            <td data-label="Room">
               <strong>${r.roomCode}</strong>
               <div style="font-size:12px; color:var(--text-muted);">Floor ${r.floorLevel} · ${r.latitude.toFixed(5)}, ${r.longitude.toFixed(5)}</div>
             </td>
-            <td><span class="badge badge-info">${r.allowedRadius}m</span></td>
-            <td>
+            <td data-label="Radius"><span class="badge badge-info">${r.allowedRadius}m</span></td>
+            <td data-label="Action">
               <button class="btn btn-outline" style="padding:5px 10px; font-size:12px;" onclick="event.stopPropagation(); deleteLocation(${r.id})">Delete</button>
             </td>
           </tr>
         `).join('');
-        // Preview the first classroom automatically
         previewLocation(rooms[0].roomCode, rooms[0].latitude, rooms[0].longitude, rooms[0].allowedRadius);
       }
     };

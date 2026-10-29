@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
   <title>Student Dashboard</title>
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -10,13 +11,15 @@
 </head>
 <body>
 <div class="app">
+
   <aside class="sidebar">
     <div class="sidebar-brand">
       <span class="logo">🎓</span> Smart Attendance
     </div>
     <nav>
       <a href="dashboard.html">🏠 Dashboard</a>
-      <a href="scan.html">📷 Scan QR</a>
+      <!-- CHANGE: "Scan QR" → "Check-in" (biometric) -->
+      <a href="attendance.html">✅ Check-in</a>
       <a href="history.html">📊 My Attendance</a>
     </nav>
     <div class="sidebar-footer">
@@ -25,10 +28,12 @@
     </div>
   </aside>
 
+  <div class="sidebar-overlay"></div>
+
   <div class="main">
     <header class="topbar">
       <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn">☰</button>
+        <button class="menu-btn" aria-label="Menu">☰</button>
         <h1>Student Dashboard</h1>
       </div>
       <div class="user">
@@ -38,28 +43,14 @@
     </header>
 
     <div class="page page-grid">
-      <!-- Stats (empty, filled from DB) -->
       <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-label">Overall Attendance</div>
-          <div class="stat-value" id="stat-overall">—</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Classes Today</div>
-          <div class="stat-value" id="stat-classes-today">—</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Marked Present</div>
-          <div class="stat-value" id="stat-present">—</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Pending</div>
-          <div class="stat-value" id="stat-pending">—</div>
-        </div>
+        <div class="stat"><div class="stat-label">Overall</div><div class="stat-value" id="stat-overall">—</div></div>
+        <div class="stat"><div class="stat-label">Classes Today</div><div class="stat-value" id="stat-classes-today">—</div></div>
+        <div class="stat"><div class="stat-label">Present</div><div class="stat-value" id="stat-present">—</div></div>
+        <div class="stat"><div class="stat-label">Pending</div><div class="stat-value" id="stat-pending">—</div></div>
       </div>
 
       <div class="grid-2">
-        <!-- Today's classes -->
         <div class="card">
           <div class="card-title">Today's Classes</div>
           <table class="table">
@@ -80,19 +71,29 @@
           </table>
         </div>
 
-        <!-- Scan CTA -->
+        <!-- CHANGE: CTA card now promotes biometric check-in -->
         <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-          <div style="font-size:42px; margin-bottom:10px;">📷</div>
-          <h3>Ready to mark attendance?</h3>
+          <div style="font-size:42px; margin-bottom:10px;">🛡️</div>
+          <h3>Ready to check in?</h3>
           <p style="color: var(--text-muted); font-size:14px; margin: 8px 0 20px;">
-            Point your camera at the QR code displayed by your lecturer.
+            Confirm attendance with your face or fingerprint when you're inside the classroom.
           </p>
-          <a href="scan.html" class="btn btn-primary">Scan QR Code</a>
+          <a href="attendance.html" class="btn btn-primary">Verify Identity</a>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<nav class="bottom-nav">
+  <ul>
+    <li><a href="dashboard.html"><span class="icon">🏠</span>Home</a></li>
+    <!-- CHANGE: bottom nav Scan → Check-in -->
+    <li><a href="attendance.html"><span class="icon">✅</span>Check-in</a></li>
+    <li><a href="history.html"><span class="icon">📊</span>History</a></li>
+  </ul>
+</nav>
+
 <script src="../assets/js/nav.js"></script>
 </body>
 </html>

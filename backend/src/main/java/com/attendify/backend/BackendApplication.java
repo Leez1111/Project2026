@@ -46,9 +46,9 @@ public class BackendApplication {
                 ));
             }
 
-            System.out.println("\n  SMART ATTENDANCE SERVER READY (Persistent Database + Fingerprint Biometric)");
+            System.out.println("\n  SMART ATTENDANCE SERVER READY (GPS Location + Preferred Biometric)");
             System.out.println("  -> Local:       http://localhost:8081/");
-            System.out.println("  -> Student:     http://localhost:8081/student/scan.html");
+            System.out.println("  -> Check-in:    http://localhost:8081/student/attendance.html");
             System.out.println("  -> Admin:       http://localhost:8081/admin/geofence.html");
             System.out.println("  -> DB Console:  http://localhost:8081/h2-console\n");
         };

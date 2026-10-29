@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CHANGE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -23,10 +25,13 @@
     </div>
   </aside>
 
+  <!-- CHANGE: Overlay -->
+  <div class="sidebar-overlay"></div>
+
   <div class="main">
     <header class="topbar">
       <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn">☰</button>
+        <button class="menu-btn" aria-label="Menu">☰</button>
         <h1>Admin Dashboard</h1>
       </div>
       <div class="user">
@@ -36,28 +41,14 @@
     </header>
 
     <div class="page page-grid">
-      <!-- Stats (populated from DB) -->
       <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-label">Total Users</div>
-          <div class="stat-value" id="stat-total-users">—</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Students</div>
-          <div class="stat-value" id="stat-students">—</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Lecturers</div>
-          <div class="stat-value" id="stat-lecturers">—</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Active Courses</div>
-          <div class="stat-value" id="stat-courses">—</div>
-        </div>
+        <div class="stat"><div class="stat-label">Total Users</div><div class="stat-value" id="stat-total-users">—</div></div>
+        <div class="stat"><div class="stat-label">Students</div><div class="stat-value" id="stat-students">—</div></div>
+        <div class="stat"><div class="stat-label">Lecturers</div><div class="stat-value" id="stat-lecturers">—</div></div>
+        <div class="stat"><div class="stat-label">Active Courses</div><div class="stat-value" id="stat-courses">—</div></div>
       </div>
 
       <div class="grid-2">
-        <!-- System health -->
         <div class="card">
           <div class="card-title">System Health</div>
           <ul id="system-health-list"
@@ -72,7 +63,6 @@
           </ul>
         </div>
 
-        <!-- Recent activity -->
         <div class="card">
           <div class="card-title">Recent Activity</div>
           <ul id="recent-activity-list"
@@ -90,6 +80,16 @@
     </div>
   </div>
 </div>
+
+<!-- CHANGE: Bottom nav -->
+<nav class="bottom-nav">
+  <ul>
+    <li><a href="dashboard.html"><span class="icon">🏠</span>Home</a></li>
+    <li><a href="users.html"><span class="icon">👥</span>Users</a></li>
+    <li><a href="geofence.html"><span class="icon">📍</span>Locations</a></li>
+  </ul>
+</nav>
+
 <script src="../assets/js/nav.js"></script>
 </body>
 </html>

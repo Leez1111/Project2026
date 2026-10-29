@@ -1,141 +1,296 @@
-/*Home layout*/
-.auth-page{
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    background:
+/* ============================================================
+   RESPONSIVE LAYOUT SYSTEM
+   Desktop (≥1024px) · Tablet (640–1023px) · Phone (<640px)
+   ============================================================ */
+
+/* ===== Home / Auth page ===== */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background:
     radial-gradient(circle at 20% 10%, #eef2ff, transparent 55%),
     radial-gradient(circle at 85% 90%, #e0f2fe, transparent 55%),
     var(--bg);
 }
 
-/*app layout*/
-.app{
-    display: grid;
-    grid-template-columns: 250px 1fr;
-    min-height: 100vh;
+/* ===== App shell ===== */
+.app {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  min-height: 100vh;
 }
 
-.sidebar{
-    background: #0f172a;
-    color: #cbd5e1;
-    padding: 24px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
+/* ===== Sidebar (desktop default) ===== */
+.sidebar {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 50;
 }
 
 .sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #fff;
-    font-weight: 800;
-    font-size: 16px;
-    margin-bottom: 26px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 26px;
 }
 .sidebar-brand span.logo {
-    width: 32px; height: 32px;
-    background: var(--primary);
-    border-radius: 8px;
-    display: grid;
-    place-items: center;
-    font-size: 16px;
+  width: 32px; height: 32px;
+  background: var(--primary);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
 }
 
 .sidebar nav { display: flex; flex-direction: column; gap: 4px; }
 
 .sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #cbd5e1;
-    transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #cbd5e1;
+  transition: all 0.15s;
 }
 .sidebar a:hover { background: #1e293b; color: #fff; }
 .sidebar a.active { background: var(--primary); color: #fff; }
 
 .sidebar-footer {
-    margin-top: auto;
-    font-size: 12px;
-    color: #64748b;
-    border-top: 1px solid #1e293b;
-    padding-top: 16px;
+  margin-top: auto;
+  font-size: 12px;
+  color: #64748b;
+  border-top: 1px solid #1e293b;
+  padding-top: 16px;
 }
 
-/*main content*/
-.main{
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
+/* ===== Overlay (tablet & phone when drawer open) ===== */
+/* CHANGE: New element — dims background behind drawer sidebar */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 45;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sidebar-overlay.show { display: block; opacity: 1; }
+
+/* ===== Main content ===== */
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.topbar{
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
-.topbar h1{ font-size: 18px;}
-.topbar .user{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text-muted);
+.topbar h1 { font-size: 18px; }
+.topbar .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-muted);
 }
-.avatar{
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: var(--primary-light);
-    color: var(--primary);
-    display: grid;
-    place-items: center;
-    font-weight: 700;
-    font-size: 13px;
-}
-
-.page{padding: 28px;}
-.page-grid{display: grid; gap: 20px;}
-.grid-2{display: grid; grid-template-columns: 1fr 1fr; gap: 20px;}
-.grid-3{display: grid; grid-template-columns: repeat(3, 1fr); gap:20px;}
-
-/*responsive*/
-@media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; }
-    .sidebar {
-        position: fixed;
-        inset: 0 auto 0 0;
-        width: 250px;
-        transform: translateX(-100%);
-        transition: transform 0.2s ease;
-        z-index: 40;
-  }
-    .sidebar.open { transform: translateX(0); }
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .menu-btn { display: inline-flex !important; }
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
 }
 
+.page { padding: 28px; }
+.page-grid { display: grid; gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+/* Menu button — hidden on desktop, shown on tablet/phone */
 .menu-btn {
-    display: none;
-    background: transparent;
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+/* ===== Bottom nav (phone only) ===== */
+/* CHANGE: New element — replaces sidebar navigation on phones */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 62px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 40;
+  padding-bottom: env(safe-area-inset-bottom); /* iPhone home-bar safe area */
+}
+.bottom-nav ul {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  list-style: none;
+  height: 100%;
+}
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.bottom-nav a .icon { font-size: 20px; line-height: 1; }
+.bottom-nav a.active { color: var(--primary); }
+
+/* ============================================================
+   TABLET (640px – 1023px)
+   ============================================================ */
+@media (max-width: 1023px) {
+
+  /* Sidebar becomes a slide-in drawer */
+  .app { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 260px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .menu-btn { display: inline-flex; }
+
+  .topbar { padding: 14px 20px; }
+  .topbar h1 { font-size: 17px; }
+
+  .page { padding: 20px; }
+
+  /* Collapse multi-column grids */
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   PHONE (< 640px)
+   ============================================================ */
+@media (max-width: 639px) {
+
+  /* Sidebar still available as drawer if user taps anything */
+  .sidebar {
+    width: 78%;
+    max-width: 300px;
+  }
+
+  /* Hide hamburger — bottom nav takes over */
+  .menu-btn { display: none !important; }
+
+  .topbar { padding: 12px 16px; }
+  .topbar h1 { font-size: 15px; }
+  .topbar .user span { display: none; } /* keep only avatar */
+
+  /* Reserve space for bottom nav */
+  .page { padding: 14px; padding-bottom: 84px; }
+
+  /* All grids single-column */
+  .grid-2,
+  .grid-3 { grid-template-columns: 1fr; }
+
+  .stat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat { padding: 14px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 11px; }
+
+  /* Smaller cards */
+  .card { padding: 16px; border-radius: 12px; }
+  .card-title { font-size: 14px; margin-bottom: 12px; }
+
+  /* ===== Tables stack into cards ===== */
+  .table thead { display: none; }
+  .table, .table tbody, .table tr, .table td {
+    display: block;
+    width: 100%;
+  }
+  .table tr {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: var(--surface);
+  }
+  .table td {
     border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: var(--text);
+    padding: 6px 0;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* Home hero roles */
+  .role-grid { grid-template-columns: 1fr; }
+
+  /* Show bottom nav */
+  .bottom-nav { display: block; }
+
+  /* Overlay visible when sidebar open */
+  .sidebar.open ~ .sidebar-overlay,
+  .sidebar-overlay.show { display: block; opacity: 1; }
+}
+
+/* ============================================================
+   LARGE DESKTOP (≥ 1440px)
+   ============================================================ */
+@media (min-width: 1440px) {
+  .app { grid-template-columns: 280px 1fr; }
+  .page { padding: 36px; max-width: 1400px; }
 }

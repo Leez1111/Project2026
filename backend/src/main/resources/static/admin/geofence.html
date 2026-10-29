@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CHANGE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
   <title>Geofences — Admin</title>
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -31,13 +33,18 @@
       border-radius: 50%;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      display: none; /* shown only when a location is selected */
+      display: none;
     }
     .map-placeholder .pin {
       font-size: 36px;
       position: relative;
       z-index: 1;
-      display: none; /* shown only when a location is selected */
+      display: none;
+    }
+
+    /* CHANGE: shorter map on phones */
+    @media (max-width: 639px) {
+      .map-placeholder { height: 220px; }
     }
   </style>
 </head>
@@ -56,10 +63,13 @@
     </div>
   </aside>
 
+  <!-- CHANGE: Overlay -->
+  <div class="sidebar-overlay"></div>
+
   <div class="main">
     <header class="topbar">
       <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn">☰</button>
+        <button class="menu-btn" aria-label="Menu">☰</button>
         <h1>Geofence Management</h1>
       </div>
       <div class="user">
@@ -70,7 +80,6 @@
 
     <div class="page page-grid">
       <div class="grid-2">
-        <!-- Classroom list -->
         <div class="card">
           <div class="card-title">
             Classroom Locations
@@ -96,7 +105,6 @@
           </table>
         </div>
 
-        <!-- Map preview -->
         <div class="card">
           <div class="card-title">Map Preview</div>
           <div class="map-placeholder">
@@ -112,6 +120,16 @@
     </div>
   </div>
 </div>
+
+<!-- CHANGE: Bottom nav -->
+<nav class="bottom-nav">
+  <ul>
+    <li><a href="dashboard.html"><span class="icon">🏠</span>Home</a></li>
+    <li><a href="users.html"><span class="icon">👥</span>Users</a></li>
+    <li><a href="geofence.html"><span class="icon">📍</span>Locations</a></li>
+  </ul>
+</nav>
+
 <script src="../assets/js/nav.js"></script>
 </body>
 </html>

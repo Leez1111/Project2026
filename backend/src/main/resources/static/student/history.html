@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CHANGE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
   <title>My Attendance — Student</title>
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
@@ -14,16 +16,19 @@
     <div class="sidebar-brand"><span class="logo">🎓</span> Smart Attendance</div>
     <nav>
       <a href="dashboard.html">🏠 Dashboard</a>
-      <a href="scan.html">📷 Scan QR</a>
+      <a href="attendance.html">✅ Check-in</a>
       <a href="history.html">📊 My Attendance</a>
     </nav>
     <div class="sidebar-footer"><a href="../index.html" style="color:#94a3b8;">← Logout</a></div>
   </aside>
 
+  <!-- CHANGE: Overlay -->
+  <div class="sidebar-overlay"></div>
+
   <div class="main">
     <header class="topbar">
       <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn">☰</button>
+        <button class="menu-btn" aria-label="Menu">☰</button>
         <h1>My Attendance</h1>
       </div>
       <div class="user">
@@ -62,6 +67,16 @@
     </div>
   </div>
 </div>
+
+<!-- CHANGE: Bottom nav -->
+<nav class="bottom-nav">
+  <ul>
+    <li><a href="dashboard.html"><span class="icon">🏠</span>Home</a></li>
+    <li><a href="attendance.html"><span class="icon">✅</span>Check-in</a></li>
+    <li><a href="history.html"><span class="icon">📊</span>History</a></li>
+  </ul>
+</nav>
+
 <script src="../assets/js/nav.js"></script>
 </body>
 </html>

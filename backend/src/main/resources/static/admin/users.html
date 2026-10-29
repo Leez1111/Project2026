@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Users & Fingerprints — Admin</title>
+  <!-- CHANGE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Users — Admin</title>
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/components.css" />
   <link rel="stylesheet" href="../assets/css/layout.css" />
@@ -23,11 +25,14 @@
     </div>
   </aside>
 
+  <!-- CHANGE: Overlay -->
+  <div class="sidebar-overlay"></div>
+
   <div class="main">
     <header class="topbar">
       <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn">☰</button>
-        <h1>Users & Fingerprint Database</h1>
+        <button class="menu-btn" aria-label="Menu">☰</button>
+        <h1>User Management</h1>
       </div>
       <div class="user">
         <span id="topbar-user-name">Guest</span>
@@ -38,14 +43,14 @@
     <div class="page page-grid">
       <div class="card">
         <div class="card-title">
-          Registered Users & Fingerprint Templates
+          All Users
           <button class="btn btn-primary" style="padding:8px 14px; font-size:13px;" id="add-user-btn">
             + Add User
           </button>
         </div>
         <table class="table">
           <thead>
-            <tr><th>Name</th><th>Role</th><th>Fingerprint DB ID</th><th>Biometric Status</th></tr>
+            <tr><th>Name</th><th>Role</th><th>Email</th><th>Status</th></tr>
           </thead>
           <tbody id="users-body">
             <tr>
@@ -63,6 +68,16 @@
     </div>
   </div>
 </div>
+
+<!-- CHANGE: Bottom nav -->
+<nav class="bottom-nav">
+  <ul>
+    <li><a href="dashboard.html"><span class="icon">🏠</span>Home</a></li>
+    <li><a href="users.html"><span class="icon">👥</span>Users</a></li>
+    <li><a href="geofence.html"><span class="icon">📍</span>Locations</a></li>
+  </ul>
+</nav>
+
 <script src="../assets/js/nav.js"></script>
 </body>
 </html>

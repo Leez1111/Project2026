@@ -1,6 +1,7 @@
 package com.attendify.backend.controller;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,33 +44,45 @@ public class AttendanceController {
     }
 
     /**
-     * Step 1: Verify that the student's GPS coordinates are within the classroom geofence.
-     * If verified, unlocks Biometric authentication (Fingerprint or Face ID based on user preference).
+     * Step 1: Navigation / GPS Location Detection (No QR required).
+     * Automatically detects if the student's coordinates are inside a classroom geofence.
+     * If verified, unlocks preferred Biometric authentication (Face ID or Fingerprint).
      */
     @PostMapping("/verify-location")
     public ResponseEntity<Map<String, Object>> verifyLocation(@RequestBody Map<String, Object> payload) {
         Map<String, Object> response = new HashMap<>();
 
-        String studentId = (String) payload.get("studentId");
+        String studentId = (String) payload.getOrDefault("studentId", "STU001");
         String roomCode = (String) payload.get("roomCode");
         Number latNum = (Number) payload.get("latitude");
         Number lonNum = (Number) payload.get("longitude");
 
-        if (studentId == null || roomCode == null || latNum == null || lonNum == null) {
+        if (studentId == null || latNum == null || lonNum == null) {
             response.put("success", false);
             response.put("biometricUnlocked", false);
-            response.put("message", "Missing required fields: studentId, roomCode, latitude, or longitude.");
+            response.put("message", "Missing required fields: studentId, latitude, or longitude.");
             return ResponseEntity.badRequest().body(response);
         }
 
         double studentLat = latNum.doubleValue();
         double studentLon = lonNum.doubleValue();
 
-        Optional<Classroom> classroomOpt = classroomRepository.findByRoomCode(roomCode);
+        Optional<Classroom> classroomOpt;
+        if (roomCode != null && !roomCode.isBlank() && !"AUTO".equalsIgnoreCase(roomCode)) {
+            classroomOpt = classroomRepository.findByRoomCode(roomCode);
+        } else {
+            // Auto-detect nearest classroom from GPS coordinates
+            List<Classroom> allClassrooms = classroomRepository.findAll();
+            classroomOpt = allClassrooms.stream()
+                    .min(Comparator.comparingDouble(c -> geofenceService.calculateDistanceMeters(
+                            studentLat, studentLon, c.getLatitude(), c.getLongitude()
+                    )));
+        }
+
         if (classroomOpt.isEmpty()) {
             response.put("success", false);
             response.put("biometricUnlocked", false);
-            response.put("message", "Classroom not found in database: " + roomCode);
+            response.put("message", "Classroom not found in database.");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -85,13 +98,14 @@ public class AttendanceController {
         );
 
         double roundedDist = Math.round(distance * 10.0) / 10.0;
+        response.put("roomCode", classroom.getRoomCode());
         response.put("distanceMeters", roundedDist);
         response.put("allowedRadius", classroom.getAllowedRadius());
 
         if (!inRange) {
             response.put("success", false);
             response.put("biometricUnlocked", false);
-            response.put("message", String.format("Outside classroom geofence (%.1fm away, allowed %.0fm). Biometric locked.", distance, classroom.getAllowedRadius()));
+            response.put("message", String.format("Outside classroom %s (%.1fm away, allowed %.0fm). Biometric locked.", classroom.getRoomCode(), distance, classroom.getAllowedRadius()));
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -101,41 +115,52 @@ public class AttendanceController {
         response.put("success", true);
         response.put("biometricUnlocked", true);
         response.put("fingerprintId", registeredFp);
-        response.put("message", String.format("Location verified (%.1fm from center). Choose Fingerprint or Face ID to mark attendance.", distance));
+        response.put("message", String.format("You are inside %s (%.1fm from center). Select Face ID or Fingerprint.", classroom.getRoomCode(), distance));
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Step 2: Once location is verified, verify Fingerprint or Face ID (user preference) against the database and record attendance.
+     * Step 2: Once classroom location is verified, verify Student's preferred Biometric (Face ID or Fingerprint)
+     * against the persistent database and record attendance.
      */
     @PostMapping({"/verify-biometric", "/verify-fingerprint"})
     public ResponseEntity<Map<String, Object>> verifyBiometric(@RequestBody Map<String, Object> payload) {
         Map<String, Object> response = new HashMap<>();
 
-        String studentId = (String) payload.get("studentId");
+        String studentId = (String) payload.getOrDefault("studentId", "STU001");
         String roomCode = (String) payload.get("roomCode");
         String biometricType = (String) payload.getOrDefault("biometricType", "FINGERPRINT");
         String scannedFingerprintId = (String) payload.get("fingerprintId");
         Number latNum = (Number) payload.get("latitude");
         Number lonNum = (Number) payload.get("longitude");
 
-        if (studentId == null || roomCode == null || latNum == null || lonNum == null) {
+        if (studentId == null || latNum == null || lonNum == null) {
             response.put("success", false);
-            response.put("message", "Missing student, classroom, or location data for biometric check.");
+            response.put("message", "Missing student or location data for biometric check.");
             return ResponseEntity.badRequest().body(response);
         }
 
         double studentLat = latNum.doubleValue();
         double studentLon = lonNum.doubleValue();
 
-        Optional<Classroom> classroomOpt = classroomRepository.findByRoomCode(roomCode);
+        Optional<Classroom> classroomOpt;
+        if (roomCode != null && !roomCode.isBlank() && !"AUTO".equalsIgnoreCase(roomCode)) {
+            classroomOpt = classroomRepository.findByRoomCode(roomCode);
+        } else {
+            classroomOpt = classroomRepository.findAll().stream()
+                    .min(Comparator.comparingDouble(c -> geofenceService.calculateDistanceMeters(
+                            studentLat, studentLon, c.getLatitude(), c.getLongitude()
+                    )));
+        }
+
         if (classroomOpt.isEmpty()) {
             response.put("success", false);
-            response.put("message", "Classroom not found: " + roomCode);
+            response.put("message", "Classroom not found.");
             return ResponseEntity.badRequest().body(response);
         }
 
         Classroom classroom = classroomOpt.get();
+        String detectedRoom = classroom.getRoomCode();
         double distance = geofenceService.calculateDistanceMeters(
                 studentLat, studentLon,
                 classroom.getLatitude(), classroom.getLongitude()
@@ -152,7 +177,9 @@ public class AttendanceController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        String normalizedBio = "FACE_ID".equalsIgnoreCase(biometricType) ? "FACE_ID" : "FINGERPRINT";
+        String normalizedBio = ("FACE_ID".equalsIgnoreCase(biometricType) || "FACE".equalsIgnoreCase(biometricType))
+                ? "FACE_ID"
+                : "FINGERPRINT";
         String bioLabel = "FACE_ID".equals(normalizedBio) ? "Face ID" : "Fingerprint";
 
         Optional<User> userOpt = userRepository.findByStudentId(studentId);
@@ -174,7 +201,6 @@ public class AttendanceController {
                 dbTemplateId = userFpId;
             }
 
-            // If client provided a specific fingerprintId, verify it matches the database record
             if (scannedFingerprintId != null && !scannedFingerprintId.isBlank()
                     && !userFpId.equalsIgnoreCase(scannedFingerprintId)
                     && !dbTemplateId.equalsIgnoreCase(scannedFingerprintId)) {
@@ -188,7 +214,7 @@ public class AttendanceController {
         AttendanceRecord record = new AttendanceRecord(
                 studentId,
                 studentName,
-                roomCode,
+                detectedRoom,
                 "PRESENT",
                 normalizedBio,
                 dbTemplateId,
@@ -200,10 +226,12 @@ public class AttendanceController {
         attendanceRecordRepository.save(record);
 
         response.put("success", true);
+        response.put("roomCode", detectedRoom);
         response.put("biometricType", normalizedBio);
         response.put("fingerprintId", dbTemplateId);
+        response.put("distanceMeters", roundedDist);
         response.put("record", record);
-        response.put("message", bioLabel + " verified (" + dbTemplateId + ")! Attendance saved to database for " + roomCode + ".");
+        response.put("message", "Verified via " + bioLabel + " · Location confirmed in " + detectedRoom + " (" + roundedDist + "m).");
         return ResponseEntity.ok(response);
     }
 
