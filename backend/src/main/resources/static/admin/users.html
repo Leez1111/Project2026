@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users & Fingerprints — Admin</title>
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="logo">⚙️</span> Smart Attendance</div>
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="users.html">👥 Users</a>
+      <a href="geofence.html">📍 Geofences</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span id="sidebar-user-name">Guest</span><br/>
+      <a href="../index.html" style="color:#94a3b8;">← Logout</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-btn">☰</button>
+        <h1>Users & Fingerprint Database</h1>
+      </div>
+      <div class="user">
+        <span id="topbar-user-name">Guest</span>
+        <div class="avatar" id="topbar-user-initials">–</div>
+      </div>
+    </header>
+
+    <div class="page page-grid">
+      <div class="card">
+        <div class="card-title">
+          Registered Users & Fingerprint Templates
+          <button class="btn btn-primary" style="padding:8px 14px; font-size:13px;" id="add-user-btn">
+            + Add User
+          </button>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Role</th><th>Fingerprint DB ID</th><th>Biometric Status</th></tr>
+          </thead>
+          <tbody id="users-body">
+            <tr>
+              <td colspan="4">
+                <div class="empty">
+                  <div class="empty-icon">👥</div>
+                  <strong>No users yet</strong>
+                  Users will appear here once added to the system.
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/js/nav.js"></script>
+</body>
+</html>

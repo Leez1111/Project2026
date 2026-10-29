@@ -1,0 +1,14 @@
+# Compiled class files & build outputs
+**/target/
+*.class
+*.jar
+*.war
+
+# Database lock/trace files (keep or ignore local runtime data)
+**/data/*.trace.db
+**/data/*.lock.db
+
+# Logs & OS files
+*.log
+.DS_Store
+Thumbs.db

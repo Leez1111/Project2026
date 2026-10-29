@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Attendance — Home</title>
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <style>
+    .hero { text-align: center; max-width: 880px; width: 100%; }
+    .hero h1 { font-size: 44px; margin-bottom: 12px; letter-spacing: -1px; }
+    .hero p { color: var(--text-muted); font-size: 17px; margin-bottom: 42px; }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    .role-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px 22px;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .role-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+    .role-icon {
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      margin: 0 auto 16px;
+    }
+    .role-card h3 { margin-bottom: 6px; }
+    .role-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+
+    @media (max-width: 800px) {
+      .role-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="hero">
+      <div style="font-size: 44px; margin-bottom: 8px;">🎓</div>
+      <h1>Smart Attendance</h1>
+      <p>Secure, dynamic QR + GPS verified attendance for modern campuses.</p>
+
+      <div class="role-grid">
+        <div class="role-card" onclick="openLoginModal('STUDENT', 'STU001', 'student/dashboard.html')">
+          <div class="role-icon">👨‍🎓</div>
+          <h3>Student</h3>
+          <p>Scan QR codes and view your attendance history.</p>
+          <span class="btn btn-primary btn-block">Enter as Student</span>
+        </div>
+
+        <div class="role-card" onclick="openLoginModal('LECTURER', 'LEC001', 'lecturer/dashboard.html')">
+          <div class="role-icon">👩‍🏫</div>
+          <h3>Lecturer</h3>
+          <p>Start sessions, generate QR codes, and monitor attendance live.</p>
+          <span class="btn btn-primary btn-block">Enter as Lecturer</span>
+        </div>
+
+        <div class="role-card" onclick="openLoginModal('ADMIN', 'ADM001', 'admin/dashboard.html')">
+          <div class="role-icon">⚙️</div>
+          <h3>Admin</h3>
+          <p>Manage users, courses, geofences, and system reports.</p>
+          <span class="btn btn-primary btn-block">Enter as Admin</span>
+        </div>
+      </div>
+
+      <p style="margin-top: 32px; font-size: 13px; color: var(--text-muted);">
+        © 2026 Smart Attendance · QR + GPS Verified
+      </p>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-backdrop" id="login-modal">
+    <div class="modal-card">
+      <div class="card-title">
+        <span id="login-modal-title">Sign In</span>
+        <button class="btn btn-outline" style="padding:4px 10px;" onclick="closeLoginModal()">✕</button>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-id">User / Student ID</label>
+          <input type="text" id="login-id" class="form-input" placeholder="e.g. STU001" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••" value="1234" required />
+        </div>
+        <div id="login-error" style="color: var(--danger); font-size: 13px; margin-bottom: 12px; display: none;"></div>
+        <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">Sign In</button>
+      </form>
+      <p style="margin-top: 12px; font-size: 12px; color: var(--text-muted); text-align: center;">
+        Demo accounts: <code>STU001</code>, <code>LEC001</code>, <code>ADM001</code> (Password: <code>1234</code>)
+      </p>
+    </div>
+  </div>
+
+  <script>
+    let targetRedirect = 'student/dashboard.html';
+
+    function openLoginModal(role, demoId, redirectUrl) {
+      targetRedirect = redirectUrl;
+      document.getElementById('login-modal-title').textContent = `Sign In (${role})`;
+      document.getElementById('login-id').value = demoId;
+      document.getElementById('login-password').value = '1234';
+      document.getElementById('login-error').style.display = 'none';
+      document.getElementById('login-modal').classList.add('open');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.remove('open');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('login-id').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errEl = document.getElementById('login-error');
+      const btn = document.getElementById('login-submit-btn');
+
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ studentId, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          errEl.textContent = data.message || 'Login failed';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+          return;
+        }
+
+        localStorage.setItem('attendify_user', JSON.stringify({
+          studentId: data.studentId,
+          name: data.name,
+          role: data.role
+        }));
+
+        window.location.href = targetRedirect;
+      } catch (err) {
+        errEl.textContent = 'Unable to connect to server. Is Spring Boot running?';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    }
+  </script>
+</body>
+</html>

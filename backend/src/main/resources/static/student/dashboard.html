@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">🎓</span> Smart Attendance
+    </div>
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="scan.html">📷 Scan QR</a>
+      <a href="history.html">📊 My Attendance</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span id="sidebar-user-name">Guest</span><br/>
+      <a href="../index.html" style="color:#94a3b8;">← Logout</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-btn">☰</button>
+        <h1>Student Dashboard</h1>
+      </div>
+      <div class="user">
+        <span id="topbar-user-name">Guest</span>
+        <div class="avatar" id="topbar-user-initials">–</div>
+      </div>
+    </header>
+
+    <div class="page page-grid">
+      <!-- Stats (empty, filled from DB) -->
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Overall Attendance</div>
+          <div class="stat-value" id="stat-overall">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Classes Today</div>
+          <div class="stat-value" id="stat-classes-today">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Marked Present</div>
+          <div class="stat-value" id="stat-present">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" id="stat-pending">—</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Today's classes -->
+        <div class="card">
+          <div class="card-title">Today's Classes</div>
+          <table class="table">
+            <thead>
+              <tr><th>Course</th><th>Time</th><th>Status</th></tr>
+            </thead>
+            <tbody id="today-classes-body">
+              <tr>
+                <td colspan="3">
+                  <div class="empty">
+                    <div class="empty-icon">📅</div>
+                    <strong>No classes yet</strong>
+                    Your classes for today will appear here.
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Scan CTA -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+          <div style="font-size:42px; margin-bottom:10px;">📷</div>
+          <h3>Ready to mark attendance?</h3>
+          <p style="color: var(--text-muted); font-size:14px; margin: 8px 0 20px;">
+            Point your camera at the QR code displayed by your lecturer.
+          </p>
+          <a href="scan.html" class="btn btn-primary">Scan QR Code</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/js/nav.js"></script>
+</body>
+</html>

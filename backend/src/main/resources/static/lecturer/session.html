@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Session — Lecturer</title>
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <style>
+    .qr-wrap {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 26px;
+      display: flex; flex-direction: column; align-items: center;
+      border: 1px solid var(--border);
+    }
+    .qr-box {
+      width: 260px; height: 260px;
+      border-radius: 12px;
+      background: repeating-conic-gradient(#e2e8f0 0 25%, #fff 0 50%) 50% / 22px 22px;
+      border: 10px solid #fff;
+      box-shadow: var(--shadow-sm);
+      display: grid; place-items: center;
+      color: var(--text-muted); font-size: 13px;
+    }
+    .countdown {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .countdown strong { color: var(--danger); font-size: 15px; }
+    .feed-list { list-style: none; display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="logo">👩‍🏫</span> Smart Attendance</div>
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="session.html">🎬 Live Session</a>
+      <a href="reports.html">📈 Reports</a>
+    </nav>
+    <div class="sidebar-footer"><a href="../index.html" style="color:#94a3b8;">← Logout</a></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-btn">☰</button>
+        <h1>Live Session</h1>
+      </div>
+      <div class="user">
+        <span id="topbar-user-name">Guest</span>
+        <div class="avatar" id="topbar-user-initials">–</div>
+      </div>
+    </header>
+
+    <div class="page">
+      <div class="grid-2">
+        <div class="qr-wrap">
+          <div class="card-title" style="width:100%;">Dynamic QR Code</div>
+          <div class="qr-box" id="qr-box">No active session</div>
+          <div class="countdown">
+            Refreshes in <strong id="qr-timer">—</strong> · Session ends at <span id="session-end">—</span>
+          </div>
+          <button class="btn btn-outline" style="margin-top: 16px;" id="toggle-session">
+            ⏸ Pause Session
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            Live Check-ins
+            <span class="badge badge-info" id="checkin-count">0 / 0</span>
+          </div>
+          <ul class="feed-list" id="feed-list">
+            <li>
+              <div class="empty" style="width:100%;">
+                <div class="empty-icon">📡</div>
+                <strong>No check-ins yet</strong>
+                Students will appear here as they scan.
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/js/nav.js"></script>
+</body>
+</html>

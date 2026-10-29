@@ -1,0 +1,11 @@
+{
+  "name": "fyp2026-smart-attendance",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": ".\\backend\\mvnw.cmd -f backend/pom.xml spring-boot:run",
+    "start": ".\\backend\\mvnw.cmd -f backend/pom.xml spring-boot:run",
+    "test": ".\\backend\\mvnw.cmd -f backend/pom.xml test"
+  }
+}
+

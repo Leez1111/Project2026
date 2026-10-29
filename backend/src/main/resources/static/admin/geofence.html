@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geofences — Admin</title>
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+  <style>
+    .map-placeholder {
+      width: 100%;
+      height: 340px;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 30% 40%, #dbeafe, transparent 40%),
+        radial-gradient(circle at 70% 60%, #dcfce7, transparent 40%),
+        linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      position: relative;
+      overflow: hidden;
+      display: grid; place-items: center;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .radius-ring {
+      position: absolute;
+      width: 200px; height: 200px;
+      border: 2px dashed var(--primary);
+      background: rgba(79, 70, 229, 0.08);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      display: none; /* shown only when a location is selected */
+    }
+    .map-placeholder .pin {
+      font-size: 36px;
+      position: relative;
+      z-index: 1;
+      display: none; /* shown only when a location is selected */
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="logo">⚙️</span> Smart Attendance</div>
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="users.html">👥 Users</a>
+      <a href="geofence.html">📍 Geofences</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span id="sidebar-user-name">Guest</span><br/>
+      <a href="../index.html" style="color:#94a3b8;">← Logout</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-btn">☰</button>
+        <h1>Geofence Management</h1>
+      </div>
+      <div class="user">
+        <span id="topbar-user-name">Guest</span>
+        <div class="avatar" id="topbar-user-initials">–</div>
+      </div>
+    </header>
+
+    <div class="page page-grid">
+      <div class="grid-2">
+        <!-- Classroom list -->
+        <div class="card">
+          <div class="card-title">
+            Classroom Locations
+            <button class="btn btn-primary" style="padding:8px 14px; font-size:13px;" id="add-location-btn">
+              + Add Location
+            </button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr><th>Room</th><th>Radius</th><th>Action</th></tr>
+            </thead>
+            <tbody id="locations-body">
+              <tr>
+                <td colspan="3">
+                  <div class="empty">
+                    <div class="empty-icon">📍</div>
+                    <strong>No locations yet</strong>
+                    Add classroom geofences to get started.
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Map preview -->
+        <div class="card">
+          <div class="card-title">Map Preview</div>
+          <div class="map-placeholder">
+            <div class="radius-ring"></div>
+            <span class="pin">📍</span>
+            <span id="map-placeholder-text">Select a location to preview</span>
+          </div>
+          <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">
+            Dashed circle = allowed radius
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+  <link rel="stylesheet" href="../assets/css/layout.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="logo">⚙️</span> Smart Attendance</div>
+    <nav>
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="users.html">👥 Users</a>
+      <a href="geofence.html">📍 Geofences</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span id="sidebar-user-name">Guest</span><br/>
+      <a href="../index.html" style="color:#94a3b8;">← Logout</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-btn">☰</button>
+        <h1>Admin Dashboard</h1>
+      </div>
+      <div class="user">
+        <span id="topbar-user-name">Guest</span>
+        <div class="avatar" id="topbar-user-initials">–</div>
+      </div>
+    </header>
+
+    <div class="page page-grid">
+      <!-- Stats (populated from DB) -->
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="stat-total-users">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Students</div>
+          <div class="stat-value" id="stat-students">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Lecturers</div>
+          <div class="stat-value" id="stat-lecturers">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Active Courses</div>
+          <div class="stat-value" id="stat-courses">—</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- System health -->
+        <div class="card">
+          <div class="card-title">System Health</div>
+          <ul id="system-health-list"
+              style="list-style:none; display:flex; flex-direction:column; gap:12px; font-size:14px;">
+            <li>
+              <div class="empty" style="width:100%;">
+                <div class="empty-icon">🩺</div>
+                <strong>No status data</strong>
+                System health will appear here.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <ul id="recent-activity-list"
+              style="list-style:none; display:flex; flex-direction:column; gap:12px; font-size:14px;">
+            <li>
+              <div class="empty" style="width:100%;">
+                <div class="empty-icon">🕒</div>
+                <strong>No recent activity</strong>
+                Recent actions will appear here.
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../assets/js/nav.js"></script>
+</body>
+</html>
